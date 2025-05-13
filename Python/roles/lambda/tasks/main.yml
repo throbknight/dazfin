@@ -1,0 +1,40 @@
+---
+- name: Ensure IAM role for Lambda exists (and has CloudWatch-logs perms)
+  amazon.aws.iam_role:
+    name: hello_datetime_role
+    state: present
+    assume_role_policy_document: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": { "Service": "lambda.amazonaws.com" },
+            "Action": "sts:AssumeRole"
+          }
+        ]
+      }
+    managed_policies:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  register: iam_role
+
+- name: Zip the Lambda source
+  community.general.archive:
+    path: "{{ role_path }}/files/hello_dateline"
+    dest: "{{ role_path }}/files/hello_datetime.zip"
+    format: zip
+  delegate_to: localhost
+
+- name: Deploy / update the Lambda function
+  amazon.aws.lambda:
+    state: present
+    name: hello-datetime
+    runtime: python3.11
+    role: "{{ iam_role.iam_role.arn }}"
+    handler: lambda_function.lambda_handler
+    zip_file: "{{ role_path }}/files/hello_datetime.zip"
+    timeout: 15
+  register: lambda_out
+- name: Show Lambda version deployed
+  ansible.builtin.debug:
+    msg: "Deployed version: {{ lambda_out.version | default('n/a') }}"

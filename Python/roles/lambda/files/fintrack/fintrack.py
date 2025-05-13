@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Load your CSV
-csv_file = 'sample.csv'  # Replace with your actual file path
+csv_file = '../../../../sample.csv'  # Replace with your actual file path
 df = pd.read_csv(csv_file)
 
 # Strip any leading/trailing spaces from column names to avoid issues
