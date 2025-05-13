@@ -40,14 +40,7 @@ df['AutoCategory'] = df['Description'].apply(categorize)
 # Summarize spending by new categories
 summary = df.groupby('AutoCategory')['Amount'].sum().sort_values()
 
-# Plot spending (optional, uncomment if you want to visualize)
-# summary.plot(kind='barh', figsize=(10, 6), color='skyblue')
-# plt.title('Spending by Auto-Categorized Categories')
-# plt.xlabel('Total Amount ($)')
-# plt.ylabel('Category')
-# plt.grid(axis='x')
-# plt.tight_layout()
-# plt.show()
+
 
 # Smart search function
 def smart_search(term):
